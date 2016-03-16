@@ -18,4 +18,4 @@ build:
             EOF
         - mvn validate
         - mvn -DskipTests package
-        - ln -f webapp/target/webapp-*.war webapp/docker/gasel.war
+        - ln -f $(ls -1tr webapp/target/webapp-*.war |tail -1) webapp/docker/gasel.war

@@ -1,4 +1,3 @@
 #! /bin/bash
 set -ex
-ln -f target/webapp-*.war docker/gasel.war
 docker build -t gasel docker
