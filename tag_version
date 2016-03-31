@@ -53,3 +53,4 @@ set_version_all next_version
 git "add",*$pom_files
 git "commit","-m","Move to v#{next_version}"
 git "push"
+git "push", "--tags", "client"
