@@ -7,10 +7,11 @@ import java.util.List;
   * since it may be overwritten next time code is regenerated. 
   * If you need to make any customizations, please use subclass. 
   */
-public abstract class _Aide extends org.apache.cayenne.CayenneDataObject {
+public class _Aide extends org.apache.cayenne.CayenneDataObject {
 
     public static final String DATE_COMMISSION_PROPERTY = "dateCommission";
     public static final String DEBUT_PROPERTY = "debut";
+    public static final String EXTENSION_DATA_PROPERTY = "extensionData";
     public static final String FIN_PROPERTY = "fin";
     public static final String MODIF_DATE_PROPERTY = "modifDate";
     public static final String MONTANT_PROPERTY = "montant";
@@ -41,6 +42,14 @@ public abstract class _Aide extends org.apache.cayenne.CayenneDataObject {
     }
     public java.util.Date getDebut() {
         return (java.util.Date)readProperty("debut");
+    }
+    
+    
+    public void setExtensionData(byte[] extensionData) {
+        writeProperty("extensionData", extensionData);
+    }
+    public byte[] getExtensionData() {
+        return (byte[])readProperty("extensionData");
     }
     
     
@@ -91,7 +100,7 @@ public abstract class _Aide extends org.apache.cayenne.CayenneDataObject {
         removeToManyTarget("bons", obj, true);
     }
     @SuppressWarnings("unchecked")
-    public List<nc.ccas.gasel.model.aides.Bon> getBons() {
+	public List<nc.ccas.gasel.model.aides.Bon> getBons() {
         return (List)readProperty("bons");
     }
     
@@ -130,7 +139,7 @@ public abstract class _Aide extends org.apache.cayenne.CayenneDataObject {
         removeToManyTarget("montants", obj, true);
     }
     @SuppressWarnings("unchecked")
-    public List<nc.ccas.gasel.model.vues.AideResumeMontants> getMontants() {
+	public List<nc.ccas.gasel.model.vues.AideResumeMontants> getMontants() {
         return (List)readProperty("montants");
     }
     

@@ -22,23 +22,23 @@
 	<node name="db"
 		 datasource="jdbc/gasel"
 		 factory="org.apache.cayenne.conf.GaselDataSourceFactory">
-			<map-ref name="_import_v1"/>
-			<map-ref name="_budget"/>
-			<map-ref name="nc.ccas.gasel.model.core.enums"/>
-			<map-ref name="nc.ccas.gasel.model.budget"/>
-			<map-ref name="nc.ccas.gasel.model.habitat"/>
-			<map-ref name="nc.ccas.gasel.model.aides"/>
-			<map-ref name="nc.ccas.gasel.model.paph.enums"/>
-			<map-ref name="nc.ccas.gasel.model.core"/>
-			<map-ref name="nc.ccas.gasel.model.pi.enums"/>
-			<map-ref name="nc.ccas.gasel.model.paph"/>
 			<map-ref name="_mairie"/>
-			<map-ref name="nc.ccas.gasel.model.pi"/>
+			<map-ref name="nc.ccas.gasel.model.budget"/>
+			<map-ref name="nc.ccas.gasel.model.habitat.enums"/>
+			<map-ref name="_import_v1"/>
 			<map-ref name="nc.ccas.gasel.model.pe.enums"/>
 			<map-ref name="implicit_links"/>
+			<map-ref name="nc.ccas.gasel.model.paph.enums"/>
+			<map-ref name="_budget"/>
+			<map-ref name="nc.ccas.gasel.model.paph"/>
+			<map-ref name="nc.ccas.gasel.model.pi.enums"/>
 			<map-ref name="nc.ccas.gasel.model.pe"/>
-			<map-ref name="nc.ccas.gasel.model.habitat.enums"/>
+			<map-ref name="nc.ccas.gasel.model.habitat"/>
+			<map-ref name="nc.ccas.gasel.model.pi"/>
+			<map-ref name="nc.ccas.gasel.model.core.enums"/>
 			<map-ref name="nc.ccas.gasel.model.core.docs"/>
+			<map-ref name="nc.ccas.gasel.model.aides"/>
+			<map-ref name="nc.ccas.gasel.model.core"/>
 	 </node>
 </domain>
 </domains>

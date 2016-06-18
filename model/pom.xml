@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>gasel</groupId>
-    <artifactId>gasel</artifactId>
-	  <version>3.1.13-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>gasel</groupId>
+		<artifactId>gasel</artifactId>
+		<version>3.1.13-SNAPSHOT</version>
+	</parent>
 
 	<artifactId>model</artifactId>
-  	<packaging>jar</packaging>
-	
+	<packaging>jar</packaging>
+
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>tests</testSourceDirectory>
@@ -37,55 +38,55 @@
 			</testResource>
 		</testResources>
 		<plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.1</version>
-                <executions>
-                    <execution>
-                        <id>install-cayenne-jar</id>
-                        <configuration>
-                            <groupId>org.apache.cayenne</groupId>
-                            <artifactId>cayenne</artifactId>
-                            <version>2.0.5</version>
-                            <packaging>jar</packaging>
-                            <file>${basedir}/3rd_party/cayenne-2.0.5.jar</file>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>validate</phase>
-                    </execution>
-                    <execution>
-                        <id>install-dia-to-cayenne-jar</id>
-                        <configuration>
-                            <groupId>nc.isi</groupId>
-                            <artifactId>dia-to-cayenne</artifactId>
-                            <version>1.0.0</version>
-                            <packaging>jar</packaging>
-                            <file>${basedir}/3rd_party/dia-to-cayenne-1.0.0.jar</file>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>validate</phase>
-                    </execution>
-                    <execution>
-                        <id>install-tapestry-annotations-jar</id>
-                        <configuration>
-                            <groupId>org.apache.tapestry</groupId>
-                            <artifactId>tapestry-annotations</artifactId>
-                            <version>4.1.6.1</version>
-                            <packaging>jar</packaging>
-                            <file>${basedir}/3rd_party/tapestry-annotations-4.1.6.1.jar</file>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>validate</phase>
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.1</version>
+				<executions>
+					<execution>
+						<id>install-cayenne-jar</id>
+						<configuration>
+							<groupId>org.apache.cayenne</groupId>
+							<artifactId>cayenne</artifactId>
+							<version>2.0.5</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/3rd_party/cayenne-2.0.5.jar</file>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<phase>validate</phase>
+					</execution>
+					<execution>
+						<id>install-dia-to-cayenne-jar</id>
+						<configuration>
+							<groupId>nc.isi</groupId>
+							<artifactId>dia-to-cayenne</artifactId>
+							<version>1.0.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/3rd_party/dia-to-cayenne-1.0.0.jar</file>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<phase>validate</phase>
+					</execution>
+					<execution>
+						<id>install-tapestry-annotations-jar</id>
+						<configuration>
+							<groupId>org.apache.tapestry</groupId>
+							<artifactId>tapestry-annotations</artifactId>
+							<version>4.1.6.1</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/3rd_party/tapestry-annotations-4.1.6.1.jar</file>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<phase>validate</phase>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
@@ -118,7 +119,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -142,7 +144,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore/>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -154,6 +156,11 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.1.4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.cayenne</groupId>
 			<artifactId>cayenne</artifactId>
@@ -177,7 +184,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.2</version>
+			<version>4.8.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

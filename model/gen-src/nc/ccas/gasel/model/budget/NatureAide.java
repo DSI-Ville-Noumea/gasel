@@ -13,7 +13,6 @@ import nc.ccas.gasel.modelUtils.SqlUtils;
 
 import org.apache.cayenne.DataObjectUtils;
 import org.apache.cayenne.DataRow;
-import org.apache.cayenne.PersistenceState;
 import org.apache.cayenne.access.DataContext;
 import org.apache.cayenne.query.SQLTemplate;
 
@@ -56,6 +55,10 @@ public class NatureAide extends _NatureAide {
 
 	public boolean isGaz() {
 		return getId() == GAZ;
+	}
+
+	public boolean isElec() {
+		return getLibelle().matches("Electricité \\(([^\\)]*)\\)");
 	}
 
 	public boolean isAutorise(TypePublic typePublic) {

@@ -173,6 +173,27 @@
 			<td></td>
 		</tr>
 		</span>
+		<span jwcid="@If" condition="ognl:aide.extension.eec">
+		<tr>
+			<td>Police:</td>
+			<td><input jwcid="@TextField" size="10" type="text"
+				value="ognl:aide.extension.eec.police" disabled="ognl:modifAideDisabled" /></td>
+			<td>Periode de prestation:</td>
+			<td><input jwcid="@TextField"
+				value="ognl:aide.extension.eec.periode"
+				disabled="ognl:modifAideDisabled" />
+			</td>
+		</tr>
+		<tr>
+			<td>Montant facture</td>
+			<td><input jwcid="@TextField"
+				size="10" type="text"
+				value="ognl:aide.extension.eec.montantFacture"
+				disabled="ognl:modifAideDisabled" /></td>
+			<td>Restant dû:</td>
+			<td><span jwcid="@Insert" value="ognl:aide.extension.eec.restantDu(aide)" /></td>
+		</tr>
+		</span>
 	</table>
 	
 	<h3>Bons annulés</h3>
@@ -200,6 +221,9 @@
 		
 		<p><button jwcid="@core/DocButton" source="ognl:aide.orduresMenageres" ref="aides.courrier_om"
 			label="Courrier OM" disabled="ognl:aide.orduresMenageres == null or isNew(aide)" class="button"/></p>
+		
+		<p><button jwcid="@core/DocButton" source="ognl:aide" ref="aides.courrier_eec"
+			label="Courrier EEC" disabled="ognl:aide.extension.eec == null or isNew(aide)" class="button"/></p>
 		
 		<div jwcid="@If" condition="ognl:courriers">
 			<p jwcid="@For" source="ognl:courriers" value="ognl:courrier" volatile="true">

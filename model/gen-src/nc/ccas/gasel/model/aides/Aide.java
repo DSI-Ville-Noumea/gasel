@@ -9,6 +9,7 @@ import static nc.ccas.gasel.modelUtils.DateUtils.debutMois;
 import static nc.ccas.gasel.modelUtils.DateUtils.finMois;
 import static nc.ccas.gasel.modelUtils.DateUtils.intersection;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import nc.ccas.gasel.model.ComplexDeletion;
 import nc.ccas.gasel.model.ModifListener;
 import nc.ccas.gasel.model.ModifUtils;
 import nc.ccas.gasel.model.TraqueModifs;
+import nc.ccas.gasel.model.aides.Bon;
+import nc.ccas.gasel.model.aides.EtatBon;
 import nc.ccas.gasel.model.aides.auto._Aide;
 import nc.ccas.gasel.model.budget.NatureAide;
 import nc.ccas.gasel.model.budget.SecteurAide;
@@ -36,6 +39,9 @@ import org.apache.cayenne.DataObjectUtils;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.query.SelectQuery;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Feminin
 public class Aide extends _Aide implements ComplexDeletion, ModifListener,
 		TraqueModifs {
@@ -43,6 +49,8 @@ public class Aide extends _Aide implements ComplexDeletion, ModifListener,
 
 	private static final DateFormat SESSION_FORMAT = new SimpleDateFormat(
 			"yyyyMMdd.kkmmss");
+
+	private static ObjectMapper mapper = new ObjectMapper();
 
 	public void creerBons(Date mois, Utilisateur utilisateur, Personne personne) {
 		// if (!getObjectContext().modifiedObjects().isEmpty()
@@ -250,14 +258,104 @@ public class Aide extends _Aide implements ComplexDeletion, ModifListener,
 		}
 		return bonsAnnules;
 	}
-	
+
 	public boolean getHasBonsEdites() {
-		for (Bon bon: getBons()) {
-			if (bon.getEtat().isEdite() || bon.getEtat().isPartiellementUtilise() || bon.getEtat().isUtilise()) {
+		for (Bon bon : getBons()) {
+			if (bon.getEtat().isEdite()
+					|| bon.getEtat().isPartiellementUtilise()
+					|| bon.getEtat().isUtilise()) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public static class Extension {
+		private EecExt eec;
+
+		public EecExt getEec() {
+			return eec;
+		}
+
+		public void setEec(EecExt eec) {
+			this.eec = eec;
+		}
+
+		public void newEec() {
+			setEec(new EecExt());
+		}
+	}
+
+	public static class EecExt {
+		private String police;
+		private String periode;
+		private Integer montantFacture;
+
+		public String getPolice() {
+			return police;
+		}
+
+		public void setPolice(String police) {
+			this.police = police;
+		}
+
+		public String getPeriode() {
+			return periode;
+		}
+
+		public void setPeriode(String periode) {
+			this.periode = periode;
+		}
+
+		public Integer restantDu(Aide aide) {
+			if (getMontantFacture() == null || aide.getMontant() == null) {
+				return null;
+			}
+			return getMontantFacture() - aide.getMontant();
+		}
+
+		public Integer getMontantFacture() {
+			return montantFacture;
+		}
+
+		public void setMontantFacture(Integer montantFacture) {
+			this.montantFacture = montantFacture;
+		}
+	}
+
+	private Extension extension;
+
+	public Extension getExtension() {
+		if (extension != null) {
+			return extension;
+		}
+		if (getExtensionData() == null) {
+			extension = new Extension();
+			return extension;
+		}
+		try {
+			extension = mapper.readValue(getExtensionData(), Extension.class);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		if (extension == null) {
+			extension = new Extension();
+		}
+		return extension;
+	}
+
+	public void updateExt() {
+		try {
+			setExtensionData(mapper.writeValueAsBytes(extension));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void setExtensionData(byte[] extensionData) {
+		super.setExtensionData(extensionData);
+		extension = null;
 	}
 
 }

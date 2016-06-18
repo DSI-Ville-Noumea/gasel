@@ -57,27 +57,38 @@ public abstract class GestionAide extends EditPage<Aide> {
 			setParent(getAide().getDossier());
 			setParentProperty("dossier");
 		}
-		if (isNew(getAide())) {
+
+		Aide aide = getAide();
+
+		if (isNew(aide)) {
 			if (getSecteurAide() == null) {
 				setNatureAide(null);
 			}
 		}
-		if (getAide().getNature() != null && getAide().getStatut() == null) {
+		if (aide.getNature() != null && aide.getStatut() == null) {
 			int defaultFreq = StatutAide.IMMEDIATE;
-			if (getAide().getNature().getImputation().isAlimentation()) {
+			if (aide.getNature().getImputation().isAlimentation()) {
 				defaultFreq = StatutAide.PLURIMENSUELLE;
 			}
-			getAide().setStatut(objectForPk(StatutAide.class, defaultFreq));
+			aide.setStatut(objectForPk(StatutAide.class, defaultFreq));
 		}
-		if (getAide().getNature() != null) {
-			if (getAide().getNature().isEau() && getAide().getEau() == null) {
-				getAide().setEau(createDataObject(AideEau.class));
+		if (aide.getNature() != null) {
+			if (aide.getNature().isEau() && aide.getEau() == null) {
+				aide.setEau(createDataObject(AideEau.class));
 			}
-			if (getAide().getNature().isOrduresMenageres()
-					&& getAide().getOrduresMenageres() == null) {
-				getAide().setOrduresMenageres(createDataObject(AideOM.class));
+			if (aide.getNature().isOrduresMenageres()
+					&& aide.getOrduresMenageres() == null) {
+				aide.setOrduresMenageres(createDataObject(AideOM.class));
+			}
+			if (aide.getNature().isElec()
+					&& aide.getExtension().getEec() == null) {
+				aide.getExtension().newEec();
 			}
 		}
+	}
+	
+	public String getExtensionData() {
+		return new String(getAide().getExtensionData());
 	}
 
 	@Override
@@ -109,6 +120,7 @@ public abstract class GestionAide extends EditPage<Aide> {
 				getObjectContext().deleteObject(om);
 			}
 		}
+		aide.updateExt();
 	}
 
 	public Aide getAide() {

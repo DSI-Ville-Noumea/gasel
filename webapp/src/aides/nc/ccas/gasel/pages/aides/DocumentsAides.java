@@ -29,6 +29,8 @@ public abstract class DocumentsAides extends DocumentsPage {
 				AideOMParams.PROVIDED));
 		DESCS.add(new RefDescVarsDocument("aides.courrier_frn_gaz", "Courrier gaz (fournisseur)",
 				AideParams.PROVIDED));
+		DESCS.add(new RefDescVarsDocument("aides.courrier_eec", "Courrier EEC",
+				AideParams.PROVIDED_EEC));
 	}
 	
 	@Override

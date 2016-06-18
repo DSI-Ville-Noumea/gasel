@@ -1,10 +1,13 @@
 package nc.ccas.gasel.docs.aides;
 
+import static nc.ccas.gasel.starjet.aides.CourrierUtils.montant;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import nc.ccas.gasel.model.aides.Aide;
+import nc.ccas.gasel.model.aides.Aide.EecExt;
 import nc.ccas.gasel.model.core.Adresse;
 import nc.ccas.gasel.model.core.Dossier;
 import nc.ccas.gasel.model.core.Personne;
@@ -16,6 +19,8 @@ import nc.ccas.gasel.utils.QuickTreeMap;
 public class AideParams extends ParamsProvider<Aide> {
 
 	public static final Set<String> PROVIDED = new TreeSet<String>();
+	public static final Set<String> PROVIDED_EEC = new TreeSet<String>();
+
 	static {
 		PROVIDED.add("designation");
 		PROVIDED.add("nom");
@@ -25,6 +30,12 @@ public class AideParams extends ParamsProvider<Aide> {
 		PROVIDED.add("ville");
 		PROVIDED.add("date courrier");
 		PROVIDED.add("montant");
+
+		PROVIDED_EEC.addAll(PROVIDED);
+		PROVIDED_EEC.add("periode");
+		PROVIDED_EEC.add("police");
+		PROVIDED_EEC.add("restant du");
+		PROVIDED_EEC.add("montant facture");
 	}
 
 	public AideParams() {
@@ -51,9 +62,21 @@ public class AideParams extends ParamsProvider<Aide> {
 		map.put("cp", codePostal(adresse));
 		map.put("ville", ville(adresse));
 		map.put("date courrier", CourrierUtils.dateCourrier());
-		map.put("montant", CourrierUtils.montant(aide.getMontant()));
+		map.put("montant", montant(aide.getMontant()));
+
+		if (aide.getExtension().getEec() != null) {
+			addEecParams(map, aide);
+		}
 
 		return map.map();
+	}
+
+	private void addEecParams(QuickMap<String, String> map, Aide aide) {
+		EecExt eec = aide.getExtension().getEec();
+		map.put("periode", eec.getPeriode());
+		map.put("police", eec.getPolice());
+		map.put("restant du", montant(eec.restantDu(aide)));
+		map.put("montant facture", montant(eec.getMontantFacture()));
 	}
 
 	private Adresse adresseAUtiliser(Dossier dossier) {

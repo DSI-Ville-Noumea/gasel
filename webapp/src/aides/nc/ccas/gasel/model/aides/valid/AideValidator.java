@@ -9,6 +9,7 @@ import static org.apache.cayenne.DataObjectUtils.intPKForObject;
 import java.util.Date;
 
 import nc.ccas.gasel.model.aides.Aide;
+import nc.ccas.gasel.model.aides.Aide.EecExt;
 import nc.ccas.gasel.model.aides.StatutAide;
 import nc.ccas.gasel.validator.GaselValidator;
 
@@ -29,6 +30,18 @@ public class AideValidator extends GaselValidator<Aide> {
 			}
 			if (aide.getNature().isOrduresMenageres()) {
 				subValidate("Ordures ménagères", aide.getOrduresMenageres());
+			}
+			if (aide.getNature().isElec()) {
+				EecExt eec = aide.getExtension().getEec();
+				require(true, eec, "EEC");
+				if (eec != null) {
+					if (!match(eec.getPeriode(), "\\d{2}/\\d{4}")) {
+						error("La période de prestation doit être de la forme 06/2016.");
+					}
+					if (!match(eec.getPolice(), "\\d+")) {
+						error("La police doit  être numérique.");
+					}
+				}
 			}
 		}
 

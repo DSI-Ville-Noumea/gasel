@@ -254,6 +254,17 @@ public abstract class GaselValidator<T extends DataObject> implements
 	}
 
 	// ------------------------------------------------------------------------
+	// String
+	//
+	
+	protected boolean match(String value, String regexp) {
+		if (value == null) {
+			return true;
+		}
+		return value.matches(regexp);
+	}
+
+	// ------------------------------------------------------------------------
 	// Validation des DataObjects
 	//
 
