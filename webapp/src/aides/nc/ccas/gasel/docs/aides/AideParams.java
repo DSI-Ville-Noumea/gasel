@@ -30,6 +30,8 @@ public class AideParams extends ParamsProvider<Aide> {
 		PROVIDED.add("ville");
 		PROVIDED.add("date courrier");
 		PROVIDED.add("montant");
+		PROVIDED.add("telephone");
+		PROVIDED.add("mobile");
 
 		PROVIDED_EEC.addAll(PROVIDED);
 		PROVIDED_EEC.add("periode");
@@ -54,6 +56,7 @@ public class AideParams extends ParamsProvider<Aide> {
 		Dossier dossier = aide.getDossier().getDossier();
 		Personne chefFamille = dossier.getChefFamille();
 		Adresse adresse = adresseAUtiliser(dossier);
+		
 
 		map.put("designation", chefFamille.getDesignationLongue());
 		map.put("nom", chefFamille.getPrenom() + " " + chefFamille.getNom());
@@ -63,6 +66,9 @@ public class AideParams extends ParamsProvider<Aide> {
 		map.put("ville", ville(adresse));
 		map.put("date courrier", CourrierUtils.dateCourrier());
 		map.put("montant", montant(aide.getMontant()));
+		
+		map.put("telephone", chefFamille.getTelephoneFixe());
+		map.put("mobile", chefFamille.getTelephonePortable());
 
 		if (aide.getExtension().getEec() != null) {
 			addEecParams(map, aide);
