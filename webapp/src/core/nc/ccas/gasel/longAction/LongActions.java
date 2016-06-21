@@ -15,7 +15,7 @@ public class LongActions {
 	/**
 	 * Délai avant suppression si le résultat n'est pas récupéré.
 	 */
-	private static final long EXPIRATION_DELAY_MS = 8 * 60 * 60 * 1000;
+	private static final long EXPIRATION_DELAY_MS = 30 * 60 * 1000;
 
 	private static final Logger LOG = Logger.getLogger(LongAction.class);
 

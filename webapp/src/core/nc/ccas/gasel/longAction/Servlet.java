@@ -76,8 +76,6 @@ public class Servlet extends HttpServlet {
 		ServletOutputStream out = resp.getOutputStream();
 		out.write(bytes);
 		out.close();
-
-		LongActions.expire(id);
 	}
 
 	private void sendStatusPage(HttpServletRequest req,
@@ -135,6 +133,9 @@ public class Servlet extends HttpServlet {
 
 		if (status == Status.SUCCESS) {
 			if (iface.getResult() != null) {
+				out.print("<a class=\"btn btn-success\" href=\"");
+				out.print(id);
+				out.println("/result\">Télécharger</a>");
 				out.print("<script>document.location.href = \"");
 				out.print(id);
 				out.println("/result\";</script>");
