@@ -8,16 +8,19 @@ import java.util.List;
 
 import nc.ccas.gasel.configuration.ModuleEntryPoint;
 import nc.ccas.gasel.jwcs.Border;
+import nc.ccas.gasel.longAction.LongAction;
+import nc.ccas.gasel.longAction.LongActions;
+import nc.ccas.gasel.longAction.ReportHelper;
 import nc.ccas.gasel.model.ModifListener;
 import nc.ccas.gasel.services.ModuleLister;
 import nc.ccas.gasel.workflow.Workflow;
 import nc.ccas.gasel.workflow.WorkflowEntry;
 
-import org.apache.cayenne.access.DataContext;
-import org.apache.cayenne.DataObjectUtils;
 import org.apache.cayenne.DataObject;
+import org.apache.cayenne.DataObjectUtils;
 import org.apache.cayenne.PersistenceState;
 import org.apache.cayenne.Persistent;
+import org.apache.cayenne.access.DataContext;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tapestry.IActionListener;
@@ -34,6 +37,7 @@ import org.apache.tapestry.event.PageEndRenderListener;
 import org.apache.tapestry.event.PageEvent;
 import org.apache.tapestry.form.Form;
 import org.apache.tapestry.link.ILinkRenderer;
+import org.apache.tapestry.web.WebContext;
 
 import com.asystan.common.tapestry.RedirectCallback;
 
@@ -387,10 +391,11 @@ public abstract class BasePage extends org.apache.tapestry.html.BasePage
 	}
 
 	public <T extends DataObject> T objectForPk(Class<T> clazz, int pk) {
-		return clazz.cast(DataObjectUtils.objectForPK(getObjectContext(), clazz,
-				pk));
+		return clazz.cast(DataObjectUtils.objectForPK(getObjectContext(),
+				clazz, pk));
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <E extends Persistent> E localObject(E object) {
 		return (E) getObjectContext().localObject(object.getObjectId(), object);
 	}
@@ -407,6 +412,20 @@ public abstract class BasePage extends org.apache.tapestry.html.BasePage
 		return new PopupLinkRenderer(RandomStringUtils.randomAlphanumeric(10),
 				"directories=no,location=no,menubar=no,personalbar=no,"
 						+ "toolbar=no,titlebar=no");
+	}
+
+	// Actions longues
+
+	protected void startLongAction(IRequestCycle cycle, LongAction action) {
+		String actionId = LongActions.start(action);
+		cycle.sendRedirect(cycle.getAbsoluteURL("/long-actions/" + actionId));
+	}
+
+	@InjectObject("service:tapestry.globals.WebContext")
+	public abstract WebContext getWebContext();
+
+	protected ReportHelper reportHelper() {
+		return new ReportHelper(getWebContext());
 	}
 
 }

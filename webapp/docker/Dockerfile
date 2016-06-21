@@ -21,7 +21,7 @@ ADD conf/tomcat-users.xml /opt/tomcat/conf/
 
 WORKDIR /opt/tomcat
 RUN rm -fr webapps/*
-ADD gasel.war /opt/tomcat/webapps/ROOT.war
+ADD ROOT /opt/tomcat/webapps/ROOT
 
 CMD bin/catalina.sh run
 

@@ -18,4 +18,5 @@ build:
             EOF
         - mvn validate
         - mvn -DskipTests package
-        - ln -f $(ls -1tr webapp/target/webapp-*.war |tail -1) webapp/docker/gasel.war
+        - rm -fr webapp/docker/ROOT
+        - mv $(ls -dtr webapp/target/webapp-*/ |tail -1) webapp/docker/ROOT

@@ -31,6 +31,11 @@
 		<servlet-class>nc.ccas.gasel.ws.ActualiteReportServlet</servlet-class>
 	</servlet>
 	
+	<servlet>
+		<servlet-name>long-actions</servlet-name>
+		<servlet-class>nc.ccas.gasel.longAction.Servlet</servlet-class>
+	</servlet>
+	
 	<!-- Listener -->
 	<listener>
 		<listener-class>nc.ccas.gasel.AppContext</listener-class>
@@ -40,6 +45,11 @@
 	<servlet-mapping>
 		<servlet-name>reports/actualite</servlet-name>
 		<url-pattern>/reports/actualite</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>long-actions</servlet-name>
+		<url-pattern>/long-actions/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>

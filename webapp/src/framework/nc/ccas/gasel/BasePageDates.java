@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import nc.ccas.gasel.modelUtils.DateDelta;
 import nc.ccas.gasel.modelUtils.DateUtils;
@@ -107,8 +108,8 @@ public class BasePageDates {
 
 	private GregorianCalendar day(Date date) {
 		GregorianCalendar gc = gc(date);
-		return new GregorianCalendar(gc.get(Calendar.YEAR), gc
-				.get(Calendar.MONTH), gc.get(Calendar.DATE));
+		return new GregorianCalendar(gc.get(Calendar.YEAR),
+				gc.get(Calendar.MONTH), gc.get(Calendar.DATE));
 	}
 
 	public Date prev(Date date) {
@@ -127,8 +128,10 @@ public class BasePageDates {
 		return DateUtils.sub(d1, d2);
 	}
 
-	public DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-
-	public DateFormat formatDense = new SimpleDateFormat("dd/MM/yy");
+	public final DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+	public final DateFormat formatDense = new SimpleDateFormat("dd/MM/yy");
+	public final DateFormat formatMois = new SimpleDateFormat("MM/yyyy");
+	public final DateFormat formatMoisTexte = new SimpleDateFormat(
+			"MMMMM yyyy", Locale.FRENCH);
 
 }

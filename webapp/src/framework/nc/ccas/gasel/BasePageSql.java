@@ -8,12 +8,12 @@ import java.util.Map;
 
 import nc.ccas.gasel.modelUtils.CommonQueries;
 
-import org.apache.cayenne.access.DataContext;
 import org.apache.cayenne.DataObject;
 import org.apache.cayenne.DataObjectUtils;
 import org.apache.cayenne.DataRow;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.Persistent;
+import org.apache.cayenne.access.DataContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.map.ObjEntity;
 import org.apache.cayenne.query.SelectQuery;
@@ -89,6 +89,9 @@ public class BasePageSql {
 	}
 
 	public Integer idOf(Persistent obj) {
+		if (obj == null) {
+			return null;
+		}
 		if (obj.getObjectId().isTemporary()) {
 			return null;
 		}

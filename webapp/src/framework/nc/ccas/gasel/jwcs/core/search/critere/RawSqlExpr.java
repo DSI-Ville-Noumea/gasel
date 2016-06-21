@@ -4,35 +4,16 @@
 package nc.ccas.gasel.jwcs.core.search.critere;
 
 import static nc.ccas.gasel.jwcs.core.search.critere.RawSqlNode.SPACE;
-import nc.ccas.gasel.model.core.Dossier;
-import nc.ccas.gasel.modelUtils.CayenneUtils;
 
-import org.apache.cayenne.access.DataContext;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHandler;
 import org.apache.cayenne.exp.parser.ASTDbPath;
-import org.apache.cayenne.exp.parser.ASTEqual;
 import org.apache.cayenne.exp.parser.ASTPath;
 import org.apache.cayenne.exp.parser.ExpressionParserTreeConstants;
 import org.apache.cayenne.exp.parser.SimpleNode;
-import org.apache.cayenne.query.SelectQuery;
 
 public class RawSqlExpr extends SimpleNode {
 	private static final long serialVersionUID = -4378545068203714948L;
-
-	public static void main(String[] args) {
-		DataContext dc = CayenneUtils.createDataContext();
-		SelectQuery query;
-		if (true) {
-			query = new SelectQuery(Dossier.class, new RawSqlExpr("id",
-					"IN (SELECT dossier_id FROM aspect_dossier_paph)"));
-		} else {
-			query = new SelectQuery(Dossier.class, new ASTEqual(new ASTDbPath(
-					"id"), 20070129));
-		}
-		query.addPrefetch("adresseHabitation.rue");
-		dc.performQuery(query);
-	}
 
 	private final ASTPath path;
 

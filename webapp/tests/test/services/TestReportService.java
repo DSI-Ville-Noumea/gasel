@@ -13,18 +13,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import nc.ccas.gasel.longAction.ReportHelper;
 import nc.ccas.gasel.model.aides.Arrete;
 import nc.ccas.gasel.model.aides.Bon;
 import nc.ccas.gasel.services.reports.ReportService;
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.JasperRunManager;
 
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.RedirectException;
@@ -51,7 +49,8 @@ public class TestReportService extends TestBase {
 	private static final String TEST_PATH = "test/services/test.jasper";
 
 	private static final String ARRETE = "2014/29";
-	//private static final String ARRETE = "2015/test/001";
+
+	// private static final String ARRETE = "2015/test/001";
 
 	public static void main(String[] args) throws Exception {
 		TestReportService test = new TestReportService();
@@ -108,8 +107,8 @@ public class TestReportService extends TestBase {
 
 	@Test
 	public void testArreteGenerique() throws Exception {
-		 testArrete("arrete-generique");
-		 testArrete("arrete-generique-sans-factures");
+		testArrete("arrete-generique");
+		testArrete("arrete-generique-sans-factures");
 	}
 
 	private void testArrete(String view) throws IOException,
@@ -123,9 +122,9 @@ public class TestReportService extends TestBase {
 				"numero", numero);
 		System.out.println(view + " for " + arrete);
 		doReportTest(view, "pdf", "ARRETE_ID", intPKForObject(arrete));
-//		for (String format : ReportService.getSupportedFormats()) {
-//			doReportTest(view, format, "ARRETE_ID", intPKForObject(arrete));
-//		}
+		// for (String format : ReportService.getSupportedFormats()) {
+		// doReportTest(view, format, "ARRETE_ID", intPKForObject(arrete));
+		// }
 	}
 
 	private void doReportTest(String reportView, String format, String key,
@@ -158,7 +157,7 @@ public class TestReportService extends TestBase {
 		}
 
 		// Capture the output
-		ContentType contentType = ReportService.getSupportForExtension(format)
+		ContentType contentType = ReportHelper.getSupportForExtension(format)
 				.getContentType();
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		when(
