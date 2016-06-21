@@ -136,8 +136,8 @@ public class Servlet extends HttpServlet {
 		if (status == Status.SUCCESS) {
 			if (iface.getResult() != null) {
 				out.print("<script>document.location.href = \"");
-				out.print(resultLocation(req));
-				out.println("\";</script>");
+				out.print(id);
+				out.println("/result\";</script>");
 			} else {
 				out.println("(pas de résultat à télécharger)");
 			}
@@ -145,10 +145,6 @@ public class Servlet extends HttpServlet {
 
 		htmlFooter(out);
 		out.close();
-	}
-
-	private String resultLocation(HttpServletRequest req) {
-		return req.getRequestURL().toString() + "/result";
 	}
 
 	private static final String BOOTSTRAP_TAG = "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\" integrity=\"sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7\" crossorigin=\"anonymous\">";
