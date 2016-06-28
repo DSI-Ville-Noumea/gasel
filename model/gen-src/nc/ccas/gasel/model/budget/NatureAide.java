@@ -58,7 +58,7 @@ public class NatureAide extends _NatureAide {
 	}
 
 	public boolean isElec() {
-		return getLibelle().matches("Electricité \\(([^\\)]*)\\)");
+		return getLibelle().matches("Electricit..? \\(([^\\)]*)\\)");
 	}
 
 	public boolean isAutorise(TypePublic typePublic) {
