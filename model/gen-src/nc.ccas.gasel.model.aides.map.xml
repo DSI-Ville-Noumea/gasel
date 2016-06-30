@@ -6,7 +6,7 @@
 		<db-attribute name="debut" type="DATE" isMandatory="true"/>
 		<db-attribute name="dossier_dossier_id" type="INTEGER" isMandatory="true"/>
 		<db-attribute name="eau_id" type="INTEGER"/>
-		<db-attribute name="extension_data" type="BINARY"/>
+		<db-attribute name="extension_data" type="CLOB"/>
 		<db-attribute name="fin" type="DATE" isMandatory="true"/>
 		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isGenerated="true" isMandatory="true"/>
 		<db-attribute name="modif_date" type="TIMESTAMP"/>

@@ -1,2 +1,2 @@
 ALTER TABLE aide
-  ADD COLUMN extension_data bytea;
+  ADD COLUMN extension_data text;

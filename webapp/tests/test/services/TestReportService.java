@@ -97,7 +97,7 @@ public class TestReportService extends TestBase {
 
 	@Test
 	public void testArreteEEC() throws Exception {
-		testArrete("arrete-eec");
+		testArrete("arrete-eec", "94740");
 	}
 
 	@Test
