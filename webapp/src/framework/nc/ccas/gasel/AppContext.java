@@ -16,10 +16,6 @@ public class AppContext implements ServletContextListener {
 		return servletContext.getInitParameter(name);
 	}
 
-	public static String ldap(String key) {
-		return getInitParameter("LDAP." + key);
-	}
-
 	public static String mail(String key) {
 		return getInitParameter("Mail." + key);
 	}

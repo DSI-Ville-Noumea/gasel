@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import nc.ccas.gasel.model.core.AccesPage;
 import nc.ccas.gasel.model.core.Utilisateur;
 import nc.ccas.gasel.modelUtils.CayenneUtils;
-import nc.ccas.gasel.services.AuthLDAP;
+import nc.ccas.gasel.services.Auth;
 import nc.ccas.gasel.services.AuthResult;
 
 import org.apache.cayenne.ObjectContext;
@@ -96,7 +96,7 @@ public class LoginData implements Serializable {
 	private Utilisateur lookupUser(String userName) {
 		userName = userName.toLowerCase();
 
-		AuthResult result = AuthLDAP.INSTANCE.authenticate(userName, null);
+		AuthResult result = Auth.INSTANCE.authenticate(userName, null);
 		if (!result.isValid())
 			return null;
 		

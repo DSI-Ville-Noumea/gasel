@@ -1,8 +1,8 @@
 package nc.ccas.gasel.services;
 
-public interface AuthLDAP {
+public interface Auth {
 
-	public static final AuthLDAP INSTANCE = new AuthLDAPImpl();
+	public static final Auth INSTANCE = new AuthImpl();
 
 	/**
 	 * Auth faible, uniquement par le nom d'utilisateur. Utile pour retrouver
