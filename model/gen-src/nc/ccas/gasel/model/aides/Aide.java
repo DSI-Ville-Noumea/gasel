@@ -346,14 +346,14 @@ public class Aide extends _Aide implements ComplexDeletion, ModifListener,
 
 	public void updateExt() {
 		try {
-			setExtensionData(mapper.writeValueAsBytes(extension));
+			setExtensionData(mapper.writeValueAsString(extension));
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void setExtensionData(byte[] extensionData) {
+	public void setExtensionData(String extensionData) {
 		super.setExtensionData(extensionData);
 		extension = null;
 	}

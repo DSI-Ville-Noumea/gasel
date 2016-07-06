@@ -45,11 +45,11 @@ public class _Aide extends org.apache.cayenne.CayenneDataObject {
     }
     
     
-    public void setExtensionData(byte[] extensionData) {
+    public void setExtensionData(String extensionData) {
         writeProperty("extensionData", extensionData);
     }
-    public byte[] getExtensionData() {
-        return (byte[])readProperty("extensionData");
+    public String getExtensionData() {
+        return (String)readProperty("extensionData");
     }
     
     

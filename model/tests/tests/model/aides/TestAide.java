@@ -14,10 +14,10 @@ public class TestAide {
 		a.getExtension().getEec().setMontantFacture(123);
 		a.updateExt();
 		
-		byte[] bytes = a.getExtensionData();
+		String extData = a.getExtensionData();
 		
 		a = new Aide();
-		a.setExtensionData(bytes);
+		a.setExtensionData(extData);
 		assertEquals(new Integer(123), a.getExtension().getEec().getMontantFacture());
 	}
 

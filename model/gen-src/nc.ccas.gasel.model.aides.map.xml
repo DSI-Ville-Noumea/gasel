@@ -130,7 +130,7 @@
 	<obj-entity name="Aide" className="nc.ccas.gasel.model.aides.Aide" dbEntityName="aide">
 		<obj-attribute name="dateCommission" type="java.util.Date" db-attribute-path="date_commission"/>
 		<obj-attribute name="debut" type="java.util.Date" db-attribute-path="debut"/>
-		<obj-attribute name="extensionData" type="byte[]" db-attribute-path="extension_data"/>
+		<obj-attribute name="extensionData" type="java.lang.String" db-attribute-path="extension_data"/>
 		<obj-attribute name="fin" type="java.util.Date" db-attribute-path="fin"/>
 		<obj-attribute name="modifDate" type="java.util.Date" db-attribute-path="modif_date"/>
 		<obj-attribute name="montant" type="java.lang.Integer" db-attribute-path="montant"/>
