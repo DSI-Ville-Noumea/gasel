@@ -42,5 +42,8 @@
         override="false" description="Serveur SMTP pour l'envoi d'e-mails"/>
     <Parameter name="Mail.default-recipient" value="mcluseau@isi.nc"
         override="false" description="Destinataire par défaut des erreurs"/>
+    
+    <Parameter name="RADI.url" value="http://radi/users" 
+        override="false" description="Préfixe d'URL RADI pour interroger un utilisateur"/>
 
 </Context>
