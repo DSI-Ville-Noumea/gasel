@@ -4,6 +4,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import nc.ccas.gasel.longAction.ReportHelper;
+
 /**
  * Bridge to application's configuration.
  * 
@@ -27,6 +29,7 @@ public class AppContext implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		servletContext = sce.getServletContext();
+		ReportHelper.setViewDir(servletContext.getRealPath("/WEB-INF/reports"));
 	}
 
 	@Override

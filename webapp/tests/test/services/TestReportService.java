@@ -5,10 +5,7 @@ import static nc.ccas.gasel.modelUtils.CommonQueries.select;
 import static nc.ccas.gasel.modelUtils.CommonQueries.unique;
 import static org.apache.cayenne.DataObjectUtils.intPKForObject;
 import static org.apache.cayenne.access.DataContext.createDataContext;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,45 +13,32 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
+import nc.ccas.gasel.longAction.LongAction;
 import nc.ccas.gasel.longAction.ReportHelper;
+import nc.ccas.gasel.longAction.ReportHelper.Context;
 import nc.ccas.gasel.model.aides.Arrete;
 import nc.ccas.gasel.model.aides.Bon;
-import nc.ccas.gasel.services.reports.ReportService;
 
-import org.apache.tapestry.IRequestCycle;
-import org.apache.tapestry.RedirectException;
 import org.apache.tapestry.TestBase;
-import org.apache.tapestry.engine.IEngineService;
-import org.apache.tapestry.engine.ILink;
-import org.apache.tapestry.engine.ServiceEncoder;
-import org.apache.tapestry.services.DataSqueezer;
-import org.apache.tapestry.services.Infrastructure;
-import org.apache.tapestry.services.LinkFactory;
-import org.apache.tapestry.services.ServiceConstants;
-import org.apache.tapestry.services.ServiceMap;
-import org.apache.tapestry.util.ContentType;
-import org.apache.tapestry.web.WebContext;
-import org.apache.tapestry.web.WebRequest;
-import org.apache.tapestry.web.WebResponse;
-import org.apache.tapestry.web.WebSession;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import test.FakeWebSession;
 
 public class TestReportService extends TestBase {
 
-	private static final String TEST_PATH = "test/services/test.jasper";
+	public static void main(String[] args) throws Exception {
+		TestReportService s = new TestReportService();
+		s.testRenderBon();
+	}
 
 	private static final String ARRETE = "2014/29";
 
 	// private static final String ARRETE = "2015/test/001";
 
-	public static void main(String[] args) throws Exception {
-		TestReportService test = new TestReportService();
-		test.testArreteGenerique();
+	@BeforeTest
+	public void setupReportHelper() {
+		ReportHelper.setViewDir(new File("src/main/webapp/WEB-INF/reports")
+				.getAbsolutePath());
 	}
 
 	@Test
@@ -129,104 +113,22 @@ public class TestReportService extends TestBase {
 
 	private void doReportTest(String reportView, String format, String key,
 			Object value) throws IOException, FileNotFoundException {
-		IRequestCycle cycle = cycleMock();
+		Context context = new ReportHelper.Context(reportView, format, null,
+				null);
+		context.put(key, value);
+		context.put("titre", "TITRE TEST");
+		context.put("article1", "Article 1 text...:");
+		context.put("infosImputation",
+				"Info imputation\n- test\n- fonction: test");
+		context.put("avecFactures", true);
 
-		try {
-			Map<String, Object> parameters = new TreeMap<>();
-			parameters.put(ReportService.FORMAT_PARAM, format);
-			parameters.put(key, value);
-			parameters.put("titre", "TITRE TEST");
-			parameters.put("article1", "Article 1 text...:");
-			parameters.put("infosImputation",
-					"Info imputation\n- test\n- fonction: test");
-			parameters.put("avecFactures", true);
-			ReportService.invoke(cycle, reportView, parameters);
-			unreachable();
-		} catch (RedirectException ex) {
-			String sessionKey = ex.getRedirectLocation();
-
-			// simulate parameter
-			when(cycle.getParameter(ServiceConstants.PARAMETER)).thenReturn(
-					sessionKey);
-
-			// simulate unsqueezing
-			DataSqueezer squeezer = mock(DataSqueezer.class);
-			when(cycle.getInfrastructure().getDataSqueezer()).thenReturn(
-					squeezer);
-			when(squeezer.unsqueeze(sessionKey)).thenReturn(sessionKey);
-		}
-
-		// Capture the output
-		ContentType contentType = ReportHelper.getSupportForExtension(format)
-				.getContentType();
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		when(
-				cycle.getInfrastructure().getResponse()
-						.getOutputStream(contentType)).thenReturn(output);
-
-		cycle.getInfrastructure().getServiceMap().getService("reports")
-				.service(cycle);
+		LongAction.Result result = new ReportHelper().renderReport(context);
 
 		// Record output for control
 		FileOutputStream out = new FileOutputStream("test-output/" + reportView
 				+ "." + format);
-		output.writeTo(out);
+		out.write(result.getBytes());
 		out.close();
-	}
-
-	private IRequestCycle cycleMock() {
-		IRequestCycle cycle = mock(IRequestCycle.class);
-
-		Infrastructure infrastructure = mock(Infrastructure.class);
-		when(cycle.getInfrastructure()).thenReturn(infrastructure);
-
-		WebRequest request = mock(WebRequest.class);
-		when(infrastructure.getRequest()).thenReturn(request);
-
-		WebResponse response = mock(WebResponse.class);
-		when(infrastructure.getResponse()).thenReturn(response);
-
-		WebSession session = new FakeWebSession();
-		when(request.getSession(true)).thenReturn(session);
-		when(request.getSession(false)).thenReturn(session);
-
-		ServiceMap serviceMap = mock(ServiceMap.class);
-		when(infrastructure.getServiceMap()).thenReturn(serviceMap);
-
-		WebContext webContext = mock(WebContext.class);
-		when(webContext.getRealPath("/WEB-INF/reports")).thenReturn(
-				new File("src/main/webapp/WEB-INF/reports").getAbsolutePath());
-
-		ReportService reportService = new ReportService();
-		reportService.setContext(webContext);
-		when(serviceMap.getService("reports")).thenReturn(reportService);
-
-		LinkFactory linkFactory = new LinkFactory() {
-			@Override
-			public ServiceEncoder[] getServiceEncoders() {
-				return null;
-			}
-
-			@Override
-			public Object[] extractListenerParameters(IRequestCycle arg0) {
-				return null;
-			}
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public ILink constructLink(IEngineService arg0, boolean arg1,
-					Map arg2, boolean arg3) {
-				ILink link = mock(ILink.class);
-				when(link.getURL()).thenReturn(
-						(String) ((Object[]) arg2
-								.get(ServiceConstants.PARAMETER))[0]);
-				return link;
-			}
-		};
-
-		reportService.setLinkFactory(linkFactory);
-
-		return cycle;
 	}
 
 }

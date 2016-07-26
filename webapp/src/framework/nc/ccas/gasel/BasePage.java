@@ -425,7 +425,7 @@ public abstract class BasePage extends org.apache.tapestry.html.BasePage
 	public abstract WebContext getWebContext();
 
 	protected ReportHelper reportHelper() {
-		return new ReportHelper(getWebContext());
+		return new ReportHelper();
 	}
 
 }

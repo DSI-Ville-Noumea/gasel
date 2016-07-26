@@ -8,7 +8,6 @@
 	<sub-module descriptor="xls.xml" />
 	<sub-module descriptor="fop.xml" />
 	<sub-module descriptor="starjet.xml" />
-	<sub-module descriptor="reports.xml" />
 	<sub-module descriptor="modeles-document.xml" />
 
 	<!-- Modules -->

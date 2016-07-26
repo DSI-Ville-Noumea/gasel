@@ -8,7 +8,6 @@ import nc.ccas.gasel.configuration.ModuleDescription;
 import nc.ccas.gasel.configuration.ModulePart;
 import nc.ccas.gasel.jwcs.core.SideBar;
 import nc.ccas.gasel.services.ModuleLister;
-import nc.ccas.gasel.services.reports.ReportService;
 
 import org.apache.tapestry.IRequestCycle;
 import org.apache.tapestry.annotations.InjectObject;
@@ -45,15 +44,10 @@ public abstract class Accueil extends BasePage {
 	public ModulePart getPart() {
 		return getSel().part;
 	}
-	
-	public void testReport(IRequestCycle cycle) {
-		// XXX remove me
-		ReportService.invoke(cycle, "test", null);
-	}
 
 	public static class SideBarValue extends SideBar.Value {
 		private static final long serialVersionUID = 7360326747498914016L;
-		
+
 		public final ModulePart part;
 
 		public SideBarValue(ModulePart part) {

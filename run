@@ -17,4 +17,4 @@ else
         postgres:9.3
     docker logs -f gasel-db |grep -m 1 "ready to accept connections"
 fi
-docker run --rm --link gasel-db:postgres -p 8080:8080 gasel
+docker run --rm --name gasel --link gasel-db:postgres -p 8080:8080 gasel

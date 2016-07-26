@@ -7,31 +7,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import nc.ccas.gasel.EditPage;
+import nc.ccas.gasel.longAction.ReportHelper;
 import nc.ccas.gasel.model.aides.Aide;
 import nc.ccas.gasel.model.aides.Arrete;
 import nc.ccas.gasel.model.aides.Bon;
 import nc.ccas.gasel.model.aides.TypeArrete;
 import nc.ccas.gasel.model.aides.UsageBon;
 import nc.ccas.gasel.modelUtils.CommonQueries;
-import nc.ccas.gasel.services.reports.ReportService;
+import nc.ccas.gasel.services.reports.RenderReportAction;
 
 import org.apache.tapestry.IRequestCycle;
 
 import com.asystan.common.AutoBox;
 
 public abstract class Creation extends EditPage<Arrete> {
-
-	public static void fillParameters(Map<String, Object> reportParameters,
-			TypeArrete typeArrete) {
-		reportParameters.put("titre", typeArrete.getTitre());
-		reportParameters.put("article1", typeArrete.getArticle1());
-		reportParameters
-				.put("infosImputation", typeArrete.getInfosImputation());
-	}
 
 	private List<AjoutAidesLigne> _syntheseBons;
 
@@ -78,14 +69,17 @@ public abstract class Creation extends EditPage<Arrete> {
 	}
 
 	public void invokeEditer(IRequestCycle cycle, String format) {
-		Map<String, Object> reportParameters = new TreeMap<>();
-		reportParameters.put("ARRETE_ID", intPKForObject(getObject()));
+		ReportHelper.Context context = new ReportHelper.Context(format,
+				reportView(), null, null);
 
 		TypeArrete typeArrete = getArrete().getType();
-		fillParameters(reportParameters, typeArrete);
+		context.put("titre", typeArrete.getTitre());
+		context.put("article1", typeArrete.getArticle1());
+		context.put("infosImputation", typeArrete.getInfosImputation());
 
-		ReportService.invokeWithParameters(cycle, reportView(), //
-				format, reportParameters);
+		context.put("ARRETE_ID", intPKForObject(getObject()));
+
+		RenderReportAction.invoke(cycle, context);
 	}
 
 	private String reportView() {

@@ -3,9 +3,6 @@ package nc.ccas.gasel.longAction;
 import static com.asystan.common.cayenne_new.QueryFactory.createAnd;
 import static com.asystan.common.cayenne_new.QueryFactory.createBetween;
 import static com.asystan.common.cayenne_new.QueryFactory.createEquals;
-import static java.util.Collections.singletonMap;
-import static nc.ccas.gasel.longAction.ReportHelper.registerTransformation;
-import static nc.ccas.gasel.longAction.ReportHelper.registerValidation;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,55 +26,54 @@ import nc.ccas.gasel.services.reports.ParametersValidation;
 
 import org.apache.cayenne.access.DataContext;
 import org.apache.cayenne.query.SQLTemplate;
+import org.apache.log4j.Logger;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
 public class EditerBons extends BaseLongAction {
 
-	static {
-		// We must rotate the result for proper printing.
-		registerTransformation("edition-bons:pdf", new DataTransformation() {
-			@Override
-			public void transformData(byte[] data, OutputStream output)
-					throws IOException {
-				PDDocument doc = PDDocument
-						.load(new ByteArrayInputStream(data));
-				for (Object o : doc.getDocumentCatalog().getAllPages()) {
-					PDPage page = (PDPage) o;
+	// We must rotate the result for proper printing.
+	private static final DataTransformation TRANSFORMATION = new DataTransformation() {
+		@Override
+		public void transformData(byte[] data, OutputStream output)
+				throws IOException {
+			Logger.getInstance(EditerBons.class).info("Rotation des bons");
+			PDDocument doc = PDDocument.load(new ByteArrayInputStream(data));
+			for (Object o : doc.getDocumentCatalog().getAllPages()) {
+				PDPage page = (PDPage) o;
 
-					page.setRotation(180);
-				}
-
-				try {
-					doc.save(output);
-				} catch (COSVisitorException e) {
-					throw new RuntimeException(e);
-				} finally {
-					doc.close();
-				}
+				page.setRotation(180);
 			}
-		});
 
-		// We must validate here since Jasper reports have no validation
-		// AND $X{IN, ...} don't handle empty list correctly : when the
-		// list is empty, we expect "x IN () == false" but it's true,
-		// thus renders every single line of the table...
-		//
-		// Here, we just try to fallback to an intuitive behaviour :
-		// render nothing!
-		//
-		registerValidation("edition-bons", new ParametersValidation() {
-			@Override
-			public void validate(Map<String, Object> parameters)
-					throws IllegalArgumentException {
-				Collection<?> bons = (Collection<?>) parameters.get("BONS_ID");
-				if (bons == null || bons.isEmpty()) {
-					parameters.put("BONS_ID", Collections.singleton(-1));
-				}
+			try {
+				doc.save(output);
+			} catch (COSVisitorException e) {
+				throw new RuntimeException(e);
+			} finally {
+				doc.close();
 			}
-		});
-	}
+		}
+	};
+
+	// We must validate here since Jasper reports have no validation
+	// AND $X{IN, ...} don't handle empty list correctly : when the
+	// list is empty, we expect "x IN () == false" but it's true,
+	// thus renders every single line of the table...
+	//
+	// Here, we just try to fallback to an intuitive behaviour :
+	// render nothing!
+	//
+	private static final ParametersValidation VALIDATION = new ParametersValidation() {
+		@Override
+		public void validate(Map<String, Object> parameters)
+				throws IllegalArgumentException {
+			Collection<?> bons = (Collection<?>) parameters.get("BONS_ID");
+			if (bons == null || bons.isEmpty()) {
+				parameters.put("BONS_ID", Collections.singleton(-1));
+			}
+		}
+	};
 
 	public static final String FREQS = "(" + StatutAide.PLURIMENSUELLE + ","
 			+ StatutAide.OCCASIONNELLE + ")";
@@ -101,6 +97,12 @@ public class EditerBons extends BaseLongAction {
 		}
 		return new SQLTemplate(Aide.class, //
 				query.replace("{{filtre-imputation}}", condition));
+	}
+	
+	public static ReportHelper.Context newContext(Collection<Integer> bonIds) {
+		ReportHelper.Context context = new ReportHelper.Context("edition-bons", "pdf", VALIDATION, TRANSFORMATION);
+		context.put("BONS_ID", bonIds);
+		return context;
 	}
 
 	private final Date mois;
@@ -144,7 +146,7 @@ public class EditerBons extends BaseLongAction {
 
 		// ------------------------------------------------------------
 		helper.start("Création des bons manquants", aides.size() + 1);
-		// +1 car phase de commit
+		// +1 étape car phase de commit
 		for (Aide aide : aides) {
 			aide.creerBons(debut, user, aide.getDossier().getDossier()
 					.getChefFamille());
@@ -172,8 +174,7 @@ public class EditerBons extends BaseLongAction {
 		// ------------------------------------------------------------
 		helper.start("Rendu du rapport");
 		List<Integer> bonIds = CayenneUtils.collectIds(bons);
-		setResult(reportHelper.renderReport("edition-bons", "pdf",
-				singletonMap("BONS_ID", bonIds)));
+		setResult(reportHelper.renderReport(newContext(bonIds)));
 
 		// ------------------------------------------------------------
 		helper.start("Marquer les bons comme édités", bons.size() + 1);

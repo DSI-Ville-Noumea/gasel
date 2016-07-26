@@ -1,5 +1,8 @@
 package nc.ccas.gasel.pages.aides;
 
+import static nc.ccas.gasel.longAction.EditerBons.newContext;
+import static nc.ccas.gasel.modelUtils.CayenneUtils.collectIds;
+
 import java.util.Date;
 import java.util.List;
 
@@ -10,8 +13,7 @@ import nc.ccas.gasel.model.aides.Aide;
 import nc.ccas.gasel.model.aides.Bon;
 import nc.ccas.gasel.model.aides.EtatBon;
 import nc.ccas.gasel.model.core.Personne;
-import nc.ccas.gasel.modelUtils.CayenneUtils;
-import nc.ccas.gasel.services.reports.ReportService;
+import nc.ccas.gasel.services.reports.RenderReportAction;
 
 import org.apache.cayenne.access.DataContext;
 import org.apache.tapestry.IRequestCycle;
@@ -43,7 +45,7 @@ public abstract class EditionBons extends ObjectPage<Aide> {
 
 	public void editer(IRequestCycle cycle) {
 		DataContext.bindThreadDataContext(getObjectContext());
-		
+
 		// Safety commit
 		try {
 			getObjectContext().commitChanges();
@@ -59,7 +61,7 @@ public abstract class EditionBons extends ObjectPage<Aide> {
 		List<Bon> bons = bonsAEditer();
 		marquerEdite(bons);
 
-		ReportService.invoke(cycle, "edition-bons", "BONS_ID", CayenneUtils.collectIds(bons));
+		RenderReportAction.invoke(cycle, newContext(collectIds(bons)));
 	}
 
 	public void reediter(IRequestCycle cycle) {
@@ -72,7 +74,7 @@ public abstract class EditionBons extends ObjectPage<Aide> {
 		}
 		getObjectContext().commitChanges();
 
-		ReportService.invoke(cycle, "edition-bons", "BONS_ID", CayenneUtils.collectIds(bonsEdites));
+		RenderReportAction.invoke(cycle, newContext(collectIds(bonsEdites)));
 	}
 
 	public List<Bon> getBonsEdites() {

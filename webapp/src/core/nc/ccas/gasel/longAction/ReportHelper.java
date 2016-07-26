@@ -32,12 +32,14 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import org.apache.cayenne.access.DataNode;
 import org.apache.cayenne.conf.Configuration;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.tapestry.web.WebContext;
 
 public class ReportHelper {
 
-	private static Map<String, DataTransformation> transformations = new TreeMap<>();
-	private static Map<String, ParametersValidation> validations = new TreeMap<>();
+	private static String viewDir;
+
+	public static void setViewDir(String viewDir) {
+		ReportHelper.viewDir = viewDir;
+	}
 
 	private static Map<String, ReportSupport> formats = new TreeMap<>();
 	static {
@@ -57,30 +59,6 @@ public class ReportHelper {
 				JRXlsxExporter.class));
 		formats.put("xls", new ReportSupport("application/msexcel",
 				JRXlsExporter.class));
-	}
-
-	/**
-	 * 
-	 * @param viewName
-	 *            viewName + ":" + format. Ex: <code>edition-bons:pdf</code>.
-	 * @param dataTransformation
-	 *            The transformation to apply.
-	 */
-	public synchronized static void registerTransformation(String viewName,
-			DataTransformation dataTransformation) {
-		transformations.put(viewName, dataTransformation);
-	}
-
-	/**
-	 * 
-	 * @param viewName
-	 *            viewName. Ex: <code>edition-bons</code>.
-	 * @param validation
-	 *            The validation to apply.
-	 */
-	public synchronized static void registerValidation(String viewName,
-			ParametersValidation validation) {
-		validations.put(viewName, validation);
 	}
 
 	public static ReportSupport getSupportForExtension(String ext) {
@@ -103,18 +81,63 @@ public class ReportHelper {
 		return getSupportForExtension(ext);
 	}
 
-	private final WebContext context;
+	public static class Context {
+		private final Map<String, Object> parameters;
+		private String view;
+		private String extension;
+		private ParametersValidation validation;
+		private DataTransformation transformation;
 
-	public ReportHelper(WebContext context) {
-		this.context = context;
+		public Context(String view, String extension,
+				ParametersValidation validation,
+				DataTransformation transformation) {
+			this.view = view;
+			this.extension = extension;
+			this.parameters = new TreeMap<>();
+			this.validation = validation;
+			this.transformation = transformation;
+		}
+
+		public String getView() {
+			return view;
+		}
+
+		public Map<String, Object> getParameters() {
+			return parameters;
+		}
+
+		public void putParameters(Map<String, ?> parameters) {
+			this.parameters.putAll(parameters);
+		}
+
+		public void put(String key, Object value) {
+			this.parameters.put(key, value);
+		}
+
+		public String getExtension() {
+			return extension;
+		}
+
+		public ParametersValidation getValidation() {
+			return validation;
+		}
+
+		public DataTransformation getTransformation() {
+			return transformation;
+		}
 	}
 
-	public LongAction.Result renderReport(final String reportName,
-			final String extension, Map<String, ?> parameters) {
+	public ReportHelper() {
+	}
+
+	public LongAction.Result renderReport(final Context context) {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
+		context.put("SUBREPORT_DIR", viewDir + "/");
+		context.put(JRParameter.REPORT_LOCALE, Locale.FRANCE);
+
 		try {
-			renderReport(context, reportName, extension, parameters, output);
+			renderReport(context, output);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -125,13 +148,13 @@ public class ReportHelper {
 
 			@Override
 			public String getFileName() {
-				return reportName + "." + extension;
+				return context.getView() + "." + context.getExtension();
 			}
 
 			@Override
 			public String getContentType() {
-				return getSupportForExtension(extension).getContentType()
-						.getMimeType();
+				return getSupportForExtension(context.getExtension())
+						.getContentType().getMimeType();
 			}
 
 			@Override
@@ -141,10 +164,9 @@ public class ReportHelper {
 		};
 	}
 
-	private void renderReport(WebContext context, String view, String ext,
-			Map<String, ?> parameters, OutputStream output) throws IOException {
-		String viewDir = context.getRealPath("/WEB-INF/reports");
-		String viewPath = viewDir + "/" + view + ".jasper";
+	private void renderReport(Context context, OutputStream output)
+			throws IOException {
+		String viewPath = viewDir + "/" + context.getView() + ".jasper";
 
 		ByteArrayOutputStream data = new ByteArrayOutputStream();
 		InputStream viewAsStream = new FileInputStream(viewPath);
@@ -153,18 +175,17 @@ public class ReportHelper {
 		try {
 			// render
 
-			Map<String, Object> params = convertMap(parameters, viewDir);
-			validateParameters(view, params);
+			if (context.getValidation() != null) {
+				context.getValidation().validate(context.getParameters());
+			}
 
 			DataNode dataNode = (DataNode) Configuration
 					.getSharedConfiguration().getDomain().getDataNodes()
 					.iterator().next();
 			connection = dataNode.getDataSource().getConnection();
-			renderReport(ext, parameters, viewAsStream, connection, params,
-					data);
+			renderReport(context, viewAsStream, connection, data);
 
-			DataTransformation transformation = transformations.get(view + ":"
-					+ ext);
+			DataTransformation transformation = context.getTransformation();
 			if (transformation == null) {
 				transformation = DataTransformation.IDENTITY;
 			}
@@ -178,12 +199,6 @@ public class ReportHelper {
 		}
 	}
 
-	private void validateParameters(String view, Map<String, Object> parameters) {
-		if (validations.containsKey(view)) {
-			validations.get(view).validate(parameters);
-		}
-	}
-
 	private void safeClose(InputStream stream) {
 		try {
 			stream.close();
@@ -192,31 +207,19 @@ public class ReportHelper {
 		}
 	}
 
-	private Map<String, Object> convertMap(Map<String, ?> map, String viewDir) {
-		Map<String, Object> newMap = new TreeMap<>(map);
-		if (!newMap.containsKey("SUBREPORT_DIR")) {
-			newMap.put("SUBREPORT_DIR", viewDir + "/");
-		}
-		if (!newMap.containsKey(JRParameter.REPORT_LOCALE)) {
-			newMap.put(JRParameter.REPORT_LOCALE, Locale.FRANCE);
-		}
-		return newMap;
-	}
-
-	private void renderReport(String extension, Map<String, ?> parameters,
-			InputStream reportStream, Connection connection,
-			Map<String, Object> reportParameters, ByteArrayOutputStream output)
+	private void renderReport(Context context, InputStream reportStream,
+			Connection connection, ByteArrayOutputStream output)
 			throws JRException {
 		DefaultJasperReportsContext reportsContext = DefaultJasperReportsContext
 				.getInstance();
 
-		JRExporter exporter = getReportSupport(extension).buildExporter(
-				reportsContext);
+		JRExporter exporter = getReportSupport(context.getExtension())
+				.buildExporter(reportsContext);
 
 		JasperFillManager jasperFillManager = JasperFillManager
 				.getInstance(reportsContext);
 		JasperPrint jasperPrint = jasperFillManager.fill(reportStream,
-				reportParameters, connection);
+				context.getParameters(), connection);
 
 		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, output);
