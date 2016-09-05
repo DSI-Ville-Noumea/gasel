@@ -69,8 +69,8 @@ public abstract class Creation extends EditPage<Arrete> {
 	}
 
 	public void invokeEditer(IRequestCycle cycle, String format) {
-		ReportHelper.Context context = new ReportHelper.Context(format,
-				reportView(), null, null);
+		ReportHelper.Context context = ReportHelper.newContext(reportView(),
+				format, null, null);
 
 		TypeArrete typeArrete = getArrete().getType();
 		context.put("titre", typeArrete.getTitre());

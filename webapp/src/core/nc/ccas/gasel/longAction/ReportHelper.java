@@ -81,6 +81,11 @@ public class ReportHelper {
 		return getSupportForExtension(ext);
 	}
 
+	public static Context newContext(String view, String extension,
+			ParametersValidation validation, DataTransformation transformation) {
+		return new Context(view, extension, validation, transformation);
+	}
+
 	public static class Context {
 		private final Map<String, Object> parameters;
 		private String view;
